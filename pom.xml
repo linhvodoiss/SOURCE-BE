@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.vti</groupId>
-	<artifactId>ShoeShop</artifactId>
+	<artifactId>Automate</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ShoeShop</name>
-	<description>ShoeShop</description>
+	<name>Automate</name>
+	<description>Automate</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
