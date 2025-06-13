@@ -3,6 +3,8 @@ package com.fpt.service;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,24 +34,30 @@ public class JWTTokenService {
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
-        
-        // convert user entity to user dto
-        LoginInfoUser userDto = new LoginInfoUser(
-        		user.getStatus().equals(UserStatus.ACTIVE) ? JWT : null,
-        		user.getUserName(), 
-        		user.getEmail(), 
-        		user.getFirstName(), 
-        		user.getLastName(),
-        		user.getPhoneNumber(),
-        		user.getRole(),
-                user.getId(),
-        		user.getStatus().toString());
 
-        // convert object to json
+        LoginInfoUser userDto = new LoginInfoUser(
+                user.getStatus().equals(UserStatus.ACTIVE) ? JWT : null,
+                user.getUserName(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getPhoneNumber(),
+                user.getRole(),
+                user.getId(),
+                user.getStatus().toString()
+        );
+
+        // Tạo JSON object với code và user info
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("code", HttpServletResponse.SC_OK);
+        responseBody.put("message", "login successfully");
+        responseBody.put("user", userDto);
+
+        // Convert object to JSON string
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(userDto);
-        
-        // return json
+        String json = ow.writeValueAsString(responseBody);
+
+        response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(json);
     }

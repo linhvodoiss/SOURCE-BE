@@ -2,12 +2,17 @@ package com.fpt.config.authentication;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fpt.authentication.CustomAuthenticationFailureHandler;
+import com.fpt.dto.UserDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,32 +32,45 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         super(new AntPathRequestMatcher(url));
         setAuthenticationManager(authManager);
         this.userService = userService;
+        setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
     }
 
     @Override
-    public Authentication attemptAuthentication(
-    		HttpServletRequest request, 
-    		HttpServletResponse response) 
-    		throws AuthenticationException, IOException, ServletException {
-        
-        return getAuthenticationManager().authenticate(
-                new UsernamePasswordAuthenticationToken(
-                		request.getParameter("username"),
-                		request.getParameter("password"),
-                        Collections.emptyList()
-                )
-        );
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException, IOException, ServletException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+
+            UserDTO loginRequest = objectMapper.readValue(request.getInputStream(), UserDTO.class);
+
+            return getAuthenticationManager().authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUserName(),
+                            loginRequest.getPassword(),
+                            Collections.emptyList()
+                    )
+            );
+
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Invalid JSON format or missing fields\"}");
+            response.getWriter().flush();
+            return null;
+        }
     }
+
 
     @Override
     protected void successfulAuthentication(
-    		HttpServletRequest request, 
-    		HttpServletResponse response, 
-    		FilterChain chain, 
-    		Authentication authResult) throws IOException, ServletException {
-    	// infor user
-    	User user = userService.findUserByUserName(authResult.getName());
-    	
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authResult) throws IOException, ServletException {
+
+        User user = userService.findUserByUserName(authResult.getName());
         JWTTokenService.addJWTTokenAndUserInfoToBody(response, user);
     }
 }
