@@ -1,5 +1,6 @@
 package com.fpt.controller;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import com.fpt.dto.ProfileDTO;
 import com.fpt.dto.UserDTO;
 import com.fpt.entity.User;
 import com.fpt.service.IUserService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
@@ -51,13 +55,24 @@ public class UserController {
 	}
 
 	@PostMapping()
-	public ResponseEntity<?> createUser(@Valid @RequestBody UserDTO dto) {
-		// create User
-		System.out.println(dto.toEntity());
-		userService.createUser(dto.toEntity());
+	public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody UserDTO dto) {
+		try {
+			userService.createUser(dto.toEntity());
 
-		return new ResponseEntity<>("We have sent an email. Please check email to active account!", HttpStatus.OK);
+			Map<String, Object> response = new HashMap<>();
+			response.put("code", HttpServletResponse.SC_OK);
+			response.put("message", "Đăng ký tài khoản thành công, vui lòng check email để kích hoạt tài khoản!");
+
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			Map<String, Object> errorResponse = new HashMap<>();
+			errorResponse.put("code", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			errorResponse.put("message", "Đăng ký tài khoản thất bại");
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+		}
 	}
+
 
 	@GetMapping("/activeUser")
 	// validate: check exists, check not expired
