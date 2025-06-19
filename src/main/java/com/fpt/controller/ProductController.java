@@ -36,7 +36,6 @@ public class ProductController {
 
         // convert entities --> dtos
         List<ProductDTO> dtos = service.convertToDto(entityPages.getContent());
-
         return new PageImpl<>(dtos, pageable, entityPages.getTotalElements());
     }
     

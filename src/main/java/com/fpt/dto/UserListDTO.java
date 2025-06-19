@@ -1,23 +1,19 @@
 package com.fpt.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-
 import com.fpt.entity.User;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @NoArgsConstructor
-public class UserDTO extends RepresentationModel<UserDTO> {
+public class UserListDTO extends RepresentationModel<UserListDTO> {
 
 	private int id;
 	
 	private String userName;
 	
 	private String email;
-
-	private String password;
 
 	private String firstName;
 
@@ -27,7 +23,6 @@ public class UserDTO extends RepresentationModel<UserDTO> {
 	private String role;
 
 	public User toEntity() {
-		return new User(userName, email, password, firstName, lastName, phoneNumber,id,role);
+		return new User(userName, email, firstName, lastName, phoneNumber,id,role);
 	}
-
 }

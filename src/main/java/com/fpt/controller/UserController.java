@@ -3,7 +3,13 @@ package com.fpt.controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.fpt.dto.*;
+import com.fpt.dto.filter.ProductFilter;
+import com.fpt.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,13 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fpt.dto.ChangePublicProfileDTO;
-import com.fpt.dto.ProfileDTO;
-import com.fpt.dto.UserDTO;
 import com.fpt.entity.User;
 import com.fpt.service.IUserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin("*")
@@ -36,22 +40,36 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 
-	@GetMapping(value = "/email/{email}")
-	public ResponseEntity<?> existsUserByEmail(@PathVariable(name = "email") String email) {
-		// get entity
-		boolean result = userService.existsUserByEmail(email);
+	@GetMapping("/list")
+	public Page<UserListDTO> getAllUsers(Pageable pageable, @RequestParam(required = false) String search) {
+		Page<User> entityPages = userService.getAllUser(pageable, search);
 
-		// return result
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		// convert entities --> dtos
+		List<UserListDTO> dtos = userService.convertToDto(entityPages.getContent());
+
+		return new PageImpl<>(dtos, pageable, entityPages.getTotalElements());
 	}
 
-	@GetMapping(value = "/userName/{userName}")
-	public ResponseEntity<?> existsUserByUserName(@PathVariable(name = "userName") String userName) {
+	@GetMapping("/checkEmail")
+	public ResponseEntity<?> existsUserByEmail(@RequestParam(name = "email") String email) {
+		// get entity
+		boolean result = userService.existsUserByEmail(email);
+		Map<String, Object> response = new HashMap<>();
+		response.put("code", HttpServletResponse.SC_OK);
+		response.put("check", result);
+		// return result
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/checkUserName")
+	public ResponseEntity<?> existsUserByUserName(@RequestParam(name = "userName") String userName) {
 		// get entity
 		boolean result = userService.existsUserByUserName(userName);
-
+		Map<String, Object> response = new HashMap<>();
+		response.put("code", HttpServletResponse.SC_OK);
+		response.put("check", result);
 		// return result
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@PostMapping()

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `User` (
     firstName       NVARCHAR(50) NOT NULL,
     lastName        NVARCHAR(50) NOT NULL,
     phoneNumber		CHAR(10) NOT NULL UNIQUE,
-    `role`            ENUM('Admin', 'Saler', 'Customer') DEFAULT 'Customer',
+    `role`            ENUM('SuperAdmin', 'Admin', 'Customer') DEFAULT 'Customer',
     `status`          TINYINT DEFAULT 0, -- 0: Not Active, 1: Active
     avatarUrl       VARCHAR(500)
 );
@@ -82,9 +82,9 @@ CREATE TABLE IF NOT EXISTS `CartItem`(
 );
 
 insert into `user`(username, email, `password`, firstName, lastName, phoneNumber, `role`, `status`, avatarUrl)
-			value	('admin',	'admin@gmail.com', '827ccb0eea8a706c4c34a16891f84e7b', 'Nguyen Van', 'A', '0987654321', 'Admin', 1, ''),
-                    ('CaoVanBay',	'Bay@gmail.com', '123456', 'Cao Van', 'Bay', '0999999999', 'Customer', 1, ''),
-                    ('LeThiTam',	'Tam@gmail.com', '123456', 'Le Thi', 'Tam', '0912345678', 'Customer', 1, '');
+			value	('admin',	'admin@gmail.com', '$2a$10$RAU5Vl1A6Iheyeg2MSBlVeLRLpH2kRSpredJkzJIm72ZscI6pg/62', 'Nguyen Van', 'A', '0987654321', 'SuperAdmin', 1, ''),
+                    ('CaoVanBay',	'Bay@gmail.com', '$2a$10$RAU5Vl1A6Iheyeg2MSBlVeLRLpH2kRSpredJkzJIm72ZscI6pg/62', 'Cao Van', 'Bay', '0999999999', 'Admin', 1, ''),
+                    ('LeThiTam',	'Tam@gmail.com', '$2a$10$RAU5Vl1A6Iheyeg2MSBlVeLRLpH2kRSpredJkzJIm72ZscI6pg/62', 'Le Thi', 'Tam', '0912345678', 'Customer', 1, '');
                     
 insert into category (`name`, `description`)
 			   value ('Nike', 'Nike là một trong những thương hiệu thể thao nổi tiếng nhất trên thế giới. Từ học sinh tiểu học cho đến các vận động viên chuyên nghiệp, không ai có thể phủ nhận sức hấp dẫn của Nike. Nếu bạn khảo sát xem có bao nhiêu người đã hoặc đang sở hữu các sản phẩm của Nike, thì con số này sẽ khiến bạn bất ngờ.'),

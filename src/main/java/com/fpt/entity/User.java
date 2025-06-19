@@ -64,13 +64,24 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "user")
 	private List<Cart> carts;
 
-	public User(String userName, String email, String password, String firstName, String lastName, int phoneNumber, int id) {
+	public User(String userName, String email, String password, String firstName, String lastName, int phoneNumber, int id, String role) {
 		this.userName = userName;
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
+		this.role=role;
+		this.id=id;
+	}
+
+	public User(String userName, String email, String firstName, String lastName, int phoneNumber, int id, String role) {
+		this.userName = userName;
+		this.email = email;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.role=role;
 		this.id=id;
 	}
 
