@@ -1,5 +1,6 @@
 package com.fpt.dto;
 
+import com.fpt.entity.Role;
 import com.fpt.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ public class UserListDTO extends RepresentationModel<UserListDTO> {
 	private String lastName;
 
 	private String phoneNumber;
-	private String role;
+	private Role role;
 
 	public User toEntity() {
 		return new User(userName, email, firstName, lastName, phoneNumber,id,role);

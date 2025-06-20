@@ -1,5 +1,6 @@
 package com.fpt.dto;
 
+import com.fpt.entity.Role;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fpt.entity.User;
@@ -24,7 +25,7 @@ public class UserDTO extends RepresentationModel<UserDTO> {
 	private String lastName;
 
 	private String phoneNumber;
-	private String role="Customer";
+	private Role role=Role.CUSTOMER;
 
 	public User toEntity() {
 		return new User(userName, email, password, firstName, lastName, phoneNumber,id,role);

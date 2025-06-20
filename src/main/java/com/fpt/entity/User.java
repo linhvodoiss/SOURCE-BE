@@ -51,8 +51,9 @@ public class User implements Serializable {
 	@Formula("concat(firstName, ' ', lastName)")
 	private String fullName;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false)
-	private String role = "Customer";
+	private Role role = Role.CUSTOMER;
 
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "`status`", nullable = false)
@@ -64,24 +65,39 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "user")
 	private List<Cart> carts;
 
-	public User(String userName, String email, String password, String firstName, String lastName, String phoneNumber, int id, String role) {
+	public User(int id, String userName, String email, String password, String firstName, String lastName, String phoneNumber, String fullName, Role role, UserStatus status, String avatarUrl, List<Cart> carts) {
+		this.id = id;
 		this.userName = userName;
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
-		this.role=role;
+		this.fullName = fullName;
+		this.role = role;
+		this.status = status;
+		this.avatarUrl = avatarUrl;
+		this.carts = carts;
+	}
+
+	public User(String userName, String email, String password, String firstName, String lastName, String phoneNumber, int id, Role role) {
+		this.userName = userName;
+		this.role = role;
+		this.email = email;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
 		this.id=id;
 	}
 
-	public User(String userName, String email, String firstName, String lastName, String phoneNumber, int id, String role) {
+	public User(String userName, String email, String firstName, String lastName, String phoneNumber, int id, Role role) {
 		this.userName = userName;
+		this.role = role;
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
-		this.role=role;
 		this.id=id;
 	}
 

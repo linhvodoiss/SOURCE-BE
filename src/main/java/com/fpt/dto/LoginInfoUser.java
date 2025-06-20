@@ -1,5 +1,7 @@
 package com.fpt.dto;
 
+import com.fpt.entity.Role;
+
 public class LoginInfoUser {
 
 	private String token;
@@ -14,14 +16,14 @@ public class LoginInfoUser {
 	
 	private String phoneNumber;
 
-	private String role;
+	private Role role;
 	private int id;
 
 	private String status;
 
 
 
-	public LoginInfoUser(String token, String userName, String email, String firstName, String lastName, String phoneNumber, String role, int id,
+	public LoginInfoUser(String token, String userName, String email, String firstName, String lastName, String phoneNumber, Role role, int id,
                          String status) {
 		this.token = token;
 		this.userName = userName;
@@ -58,7 +60,7 @@ public class LoginInfoUser {
 		return phoneNumber;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 

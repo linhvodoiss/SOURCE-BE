@@ -190,7 +190,7 @@ public class UserService implements IUserService {
 		}
 
 		return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
-				AuthorityUtils.createAuthorityList(user.getRole()));
+				AuthorityUtils.createAuthorityList(String.valueOf(user.getRole())));
 	}
 
 	@Override
