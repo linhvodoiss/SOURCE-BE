@@ -1,14 +1,12 @@
 package com.fpt.service;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
@@ -20,6 +18,7 @@ import com.fpt.entity.UserStatus;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class JWTTokenService {
 	
@@ -31,6 +30,7 @@ public class JWTTokenService {
     public static void addJWTTokenAndUserInfoToBody(HttpServletResponse response, User user) throws IOException {
         String JWT = Jwts.builder()
                 .setSubject(user.getUserName())
+                .claim("role", user.getRole())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
@@ -64,20 +64,22 @@ public class JWTTokenService {
 
     public static Authentication parseTokenToUserInformation(HttpServletRequest request) {
         String token = request.getHeader(AUTHORIZATION);
-        
-        if (token == null) {
-        	return null;
-        }
-        
-        // parse the token
-        String username = Jwts.parser()
-                .setSigningKey(SECRET)
-                .parseClaimsJws(token.replace(PREFIX_TOKEN, ""))
-                .getBody()
-                .getSubject();
+        if (token == null) return null;
 
-        return username != null ?
-                new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()) :
-                null;
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token.replace(PREFIX_TOKEN, "").trim())
+                .getBody();
+
+        String username = claims.getSubject();
+        String role = claims.get("role", String.class); // lấy role từ token
+
+        if (username != null && role != null) {
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+            return new UsernamePasswordAuthenticationToken(username, null, List.of(authority));
+        }
+
+        return null;
     }
+
 }

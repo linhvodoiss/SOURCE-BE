@@ -39,26 +39,6 @@ public class UserController {
 
 	@Autowired
 	private IUserService userService;
-
-	@GetMapping("/list")
-	public ResponseEntity<Map<String, Object>> getAllUsers(
-			Pageable pageable,
-			@RequestParam(required = false) String search
-	) {
-		Page<User> entityPages = userService.getAllUser(pageable, search);
-		List<UserListDTO> dtos = userService.convertToDto(entityPages.getContent());
-		Page<UserListDTO> dtoPage = new PageImpl<>(dtos, pageable, entityPages.getTotalElements());
-
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> pageMap = mapper.convertValue(dtoPage, new TypeReference<>() {});
-
-		pageMap.put("code", HttpServletResponse.SC_OK);
-		pageMap.put("message", "Lấy danh sách người dùng thành công");
-
-		return ResponseEntity.ok(pageMap);
-	}
-
-
 	@GetMapping("/checkEmail")
 	public ResponseEntity<?> existsUserByEmail(@RequestParam(name = "email") String email) {
 		// get entity

@@ -1,8 +1,11 @@
 package com.fpt.config.authentication;
 
+import com.fpt.authentication.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,7 +20,9 @@ import com.google.common.collect.ImmutableList;
 import com.fpt.service.IUserService;
 
 @Component
+@Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -25,6 +30,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -34,10 +42,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+		.exceptionHandling()
+		.authenticationEntryPoint(customAuthenticationEntryPoint) // 👈 Thêm dòng này
+		.and()
 		.authorizeRequests()
 		.antMatchers("/api/v1/login").anonymous()
 		.antMatchers("/api/v1/users/profile").authenticated()
-		.antMatchers("/api/v1/users/**", "/api/v1/products/**", "/api/v1/categorys/**").permitAll()
+		.antMatchers("/api/v1/users/**", "/api/v1/categorys/**","/api/v1/products/**").permitAll()
+		.antMatchers( "/api/v1/admin/**").hasRole("Admin")
+//		.antMatchers( "/api/v1/products/**").hasAnyRole("Admin", "Customer")
 		.anyRequest().permitAll()
 		.and()
 		.httpBasic()
