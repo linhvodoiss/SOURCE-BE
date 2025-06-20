@@ -10,7 +10,7 @@ public class ProfileDTO {
 
 	private String lastName;
 	
-	private int phoneNumber;
+	private String phoneNumber;
 
 	private String role;
 
@@ -18,8 +18,8 @@ public class ProfileDTO {
 
 	private String avatarUrl;
 
-	public ProfileDTO(String userName, String email, String firstName, String lastName,int phoneNumber, String role, String status,
-			String avatarUrl) {
+	public ProfileDTO(String userName, String email, String firstName, String lastName, String phoneNumber, String role, String status,
+					  String avatarUrl) {
 		this.userName = userName;
 		this.email = email;
 		this.firstName = firstName;
@@ -46,7 +46,7 @@ public class ProfileDTO {
 		return lastName;
 	}
 	
-	public int phoneNumber() {
+	public String phoneNumber() {
 		return phoneNumber;
 	}
 

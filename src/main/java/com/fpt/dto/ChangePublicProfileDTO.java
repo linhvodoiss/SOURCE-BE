@@ -18,7 +18,7 @@ public class ChangePublicProfileDTO {
 
 	private String lastName;
 	
-	private int phoneNumber;
+	private String phoneNumber;
 
 	public ChangePublicProfileDTO() {
 	}

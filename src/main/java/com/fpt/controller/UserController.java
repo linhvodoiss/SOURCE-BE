@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fpt.entity.User;
 import com.fpt.service.IUserService;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,14 +41,23 @@ public class UserController {
 	private IUserService userService;
 
 	@GetMapping("/list")
-	public Page<UserListDTO> getAllUsers(Pageable pageable, @RequestParam(required = false) String search) {
+	public ResponseEntity<Map<String, Object>> getAllUsers(
+			Pageable pageable,
+			@RequestParam(required = false) String search
+	) {
 		Page<User> entityPages = userService.getAllUser(pageable, search);
-
-		// convert entities --> dtos
 		List<UserListDTO> dtos = userService.convertToDto(entityPages.getContent());
+		Page<UserListDTO> dtoPage = new PageImpl<>(dtos, pageable, entityPages.getTotalElements());
 
-		return new PageImpl<>(dtos, pageable, entityPages.getTotalElements());
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> pageMap = mapper.convertValue(dtoPage, new TypeReference<>() {});
+
+		pageMap.put("code", HttpServletResponse.SC_OK);
+		pageMap.put("message", "Lấy danh sách người dùng thành công");
+
+		return ResponseEntity.ok(pageMap);
 	}
+
 
 	@GetMapping("/checkEmail")
 	public ResponseEntity<?> existsUserByEmail(@RequestParam(name = "email") String email) {
@@ -65,6 +74,17 @@ public class UserController {
 	public ResponseEntity<?> existsUserByUserName(@RequestParam(name = "userName") String userName) {
 		// get entity
 		boolean result = userService.existsUserByUserName(userName);
+		Map<String, Object> response = new HashMap<>();
+		response.put("code", HttpServletResponse.SC_OK);
+		response.put("check", result);
+		// return result
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/checkPhoneNumber")
+	public ResponseEntity<?> existsUserByPhoneNumber(@RequestParam(name = "phoneNumber") String phoneNumber) {
+		// get entity
+		boolean result = userService.existsUserByPhoneNumber(phoneNumber);
 		Map<String, Object> response = new HashMap<>();
 		response.put("code", HttpServletResponse.SC_OK);
 		response.put("check", result);
@@ -117,8 +137,10 @@ public class UserController {
 	public ResponseEntity<?> sendResetPasswordViaEmail(@RequestParam String email) {
 
 		userService.resetPasswordViaEmail(email);
-
-		return new ResponseEntity<>("We have sent an email. Please check email to reset password!", HttpStatus.OK);
+		Map<String, Object> response = new HashMap<>();
+		response.put("code", HttpServletResponse.SC_OK);
+		response.put("message", "Chúng tôi đã gửi email, Vui lòng kiểm tra email "+email+" để đổi mật khẩu");
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	// resend reset password
@@ -134,11 +156,19 @@ public class UserController {
 	@GetMapping("/resetPassword")
 	// validate: check exists, check not expired
 	public ResponseEntity<?> resetPasswordViaEmail(@RequestParam String token, @RequestParam String newPassword) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			// reset password
+			userService.resetPassword(token, newPassword);
 
-		// reset password
-		userService.resetPassword(token, newPassword);
-
-		return new ResponseEntity<>("Reset Password success!", HttpStatus.OK);
+			response.put("code", HttpServletResponse.SC_OK);
+			response.put("message", "Cập nhật mật khẩu thành công");
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			response.put("code", HttpServletResponse.SC_NOT_FOUND);
+			response.put("message", "Cập nhật mật khẩu thất bại");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@GetMapping("/profile")

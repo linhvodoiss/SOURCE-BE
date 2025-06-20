@@ -30,7 +30,7 @@ public class EmailService implements IEmailService {
 		User user = userService.findUserByEmail(email);
 		String token = registrationUserTokenRepository.findByUserId(user.getId());
 
-		String confirmationUrl = "http://localhost:3000/active?token=" + token;
+		String confirmationUrl = "http://localhost:3001/active?token=" + token;
 
 		String subject = "Xác Nhận Đăng Ký Account";
 		String content = "Bạn đã đăng ký thành công. Click vào link dưới đây để kích hoạt tài khoản \n"
@@ -45,7 +45,7 @@ public class EmailService implements IEmailService {
 		User user = userService.findUserByEmail(email);
 		String token = resetPasswordTokenRepository.findByUserId(user.getId());
 
-		String confirmationUrl = "http://localhost:3000/auth/new-password?token=" + token;
+		String confirmationUrl = "http://localhost:3001/new-password?token=" + token;
 
 		String subject = "Thiết lập lại mật khẩu";
 		String content = "Click vào link dưới đây để thiết lập lại mật khẩu (nếu không phải bạn xin vui lòng bỏ qua).\n"

@@ -34,6 +34,7 @@ public interface IUserService extends UserDetailsService {
 
 	boolean existsUserByUserName(String userName);
 
+	boolean existsUserByPhoneNumber(String phoneNumber);
 	void resetPasswordViaEmail(String email);
 
 	void resetPassword(String token, String newPassword);
@@ -43,5 +44,5 @@ public interface IUserService extends UserDetailsService {
 	UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 	
 	void changeUserProfile(String username, ChangePublicProfileDTO dto);
-	List<UserListDTO> convertToDto(List<User> content);
+	List<UserListDTO> convertToDto(List<User> data);
 }

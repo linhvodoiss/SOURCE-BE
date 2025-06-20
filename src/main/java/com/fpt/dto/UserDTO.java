@@ -23,8 +23,8 @@ public class UserDTO extends RepresentationModel<UserDTO> {
 
 	private String lastName;
 
-	private int phoneNumber;
-	private String role;
+	private String phoneNumber;
+	private String role="Customer";
 
 	public User toEntity() {
 		return new User(userName, email, password, firstName, lastName, phoneNumber,id,role);

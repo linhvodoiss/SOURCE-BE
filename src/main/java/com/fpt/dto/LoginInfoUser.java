@@ -12,7 +12,7 @@ public class LoginInfoUser {
 
 	private String lastName;
 	
-	private int phoneNumber;
+	private String phoneNumber;
 
 	private String role;
 	private int id;
@@ -21,8 +21,8 @@ public class LoginInfoUser {
 
 
 
-	public LoginInfoUser(String token, String userName, String email, String firstName, String lastName, int phoneNumber, String role,int id,
-			String status) {
+	public LoginInfoUser(String token, String userName, String email, String firstName, String lastName, String phoneNumber, String role, int id,
+                         String status) {
 		this.token = token;
 		this.userName = userName;
 		this.email = email;
@@ -54,7 +54,7 @@ public class LoginInfoUser {
 		return lastName;
 	}
 	
-	public int getphoneNumber() {
+	public String getphoneNumber() {
 		return phoneNumber;
 	}
 

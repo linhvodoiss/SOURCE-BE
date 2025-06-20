@@ -117,6 +117,11 @@ public class UserService implements IUserService {
 	}
 
 	@Override
+	public boolean existsUserByPhoneNumber(String phoneNumber) {
+		return userRepository.existsByPhoneNumber(phoneNumber);
+	}
+
+	@Override
 	public void activeUser(String token) {
 
 		// get token

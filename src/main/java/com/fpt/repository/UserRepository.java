@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 	public boolean existsByUserName(String userName);
 
 	public boolean existsByEmail(String email);
-	
+	public boolean existsByPhoneNumber(String phoneNumber);
 	@Query("	SELECT 	status 		"
 			+ "	FROM 	User 		"
 			+ " WHERE 	email = :email")

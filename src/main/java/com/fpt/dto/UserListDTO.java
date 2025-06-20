@@ -19,7 +19,7 @@ public class UserListDTO extends RepresentationModel<UserListDTO> {
 
 	private String lastName;
 
-	private int phoneNumber;
+	private String phoneNumber;
 	private String role;
 
 	public User toEntity() {

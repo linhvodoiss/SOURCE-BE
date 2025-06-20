@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `User` (
     `password`        VARCHAR(800) NOT NULL,
     firstName       NVARCHAR(50) NOT NULL,
     lastName        NVARCHAR(50) NOT NULL,
-    phoneNumber		CHAR(10) NOT NULL UNIQUE,
+    phoneNumber		VARCHAR(20) NOT NULL UNIQUE,
     `role`            ENUM('SuperAdmin', 'Admin', 'Customer') DEFAULT 'Customer',
     `status`          TINYINT DEFAULT 0, -- 0: Not Active, 1: Active
     avatarUrl       VARCHAR(500)
