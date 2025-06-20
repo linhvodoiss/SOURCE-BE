@@ -162,6 +162,7 @@ public class UserController {
 		User user = userService.findUserByUserName(username);
 		
         // convert user entity to user dto
+//		test git
 		ProfileDTO profileDto = new ProfileDTO(
         		user.getUserName(), 
         		user.getEmail(), 
