@@ -1,6 +1,7 @@
 package com.fpt.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,10 +14,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Formula;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "`User`")
@@ -61,11 +64,16 @@ public class User implements Serializable {
 
 	@Column(name = "avatarUrl")
 	private String avatarUrl;
-	
-	@OneToMany(mappedBy = "user")
-	private List<Cart> carts;
 
-	public User(int id, String userName, String email, String password, String firstName, String lastName, String phoneNumber, String fullName, Role role, UserStatus status, String avatarUrl, List<Cart> carts) {
+	@CreationTimestamp
+	@Column(name = "created_at", updatable = false)
+	private LocalDateTime createdAt;
+	@UpdateTimestamp
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
+
+
+	public User(int id, String userName, String email, String password, String firstName, String lastName, String phoneNumber, String fullName, Role role, UserStatus status, String avatarUrl) {
 		this.id = id;
 		this.userName = userName;
 		this.email = email;
@@ -77,7 +85,6 @@ public class User implements Serializable {
 		this.role = role;
 		this.status = status;
 		this.avatarUrl = avatarUrl;
-		this.carts = carts;
 	}
 
 	public User(String userName, String email, String password, String firstName, String lastName, String phoneNumber, int id, Role role) {

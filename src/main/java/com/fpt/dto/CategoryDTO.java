@@ -1,35 +1,20 @@
 package com.fpt.dto;
-import java.util.List;
 
-import org.springframework.hateoas.RepresentationModel;
+import lombok.*;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class CategoryDTO extends RepresentationModel<CategoryDTO> {
-	public CategoryDTO(int id, String name) {
-		this.id = id;
-		this.name = name;
-	}
-
-	private int id;
-	
+@AllArgsConstructor
+@Builder
+public class CategoryDTO {
+	private Integer id;
 	private String name;
-	
-	private String description;
-	
-	private List<ProductDTO> products;
-	
-	@Data
-	@NoArgsConstructor
-	public static class ProductDTO extends RepresentationModel<CategoryDTO>{
-		private short id;
-		
-		private String name;
-		
-	}
-
-	
+	private String slug;
+	private Integer order;
+	private Boolean isActive;
+	private Integer versionId;
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 }

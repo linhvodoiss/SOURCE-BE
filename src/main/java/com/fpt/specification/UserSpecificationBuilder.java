@@ -1,8 +1,5 @@
 package com.fpt.specification;
 
-import com.auth0.client.mgmt.filter.UserFilter;
-import com.fpt.dto.filter.ProductFilter;
-import com.fpt.entity.Product;
 import com.fpt.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;

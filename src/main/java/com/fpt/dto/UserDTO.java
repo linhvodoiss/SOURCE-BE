@@ -8,6 +8,8 @@ import com.fpt.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 public class UserDTO extends RepresentationModel<UserDTO> {
@@ -26,6 +28,8 @@ public class UserDTO extends RepresentationModel<UserDTO> {
 
 	private String phoneNumber;
 	private Role role=Role.CUSTOMER;
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 
 	public User toEntity() {
 		return new User(userName, email, password, firstName, lastName, phoneNumber,id,role);

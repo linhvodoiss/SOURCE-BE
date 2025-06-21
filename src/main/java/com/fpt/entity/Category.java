@@ -1,41 +1,45 @@
 package com.fpt.entity;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Category")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Category {
-
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	
-	@Column(name = "name", length = 50, nullable = false, unique = true)
+	private Integer id;
+
+	@ManyToOne
+	@JoinColumn(name = "version_id", nullable = false)
+	private Version version;
+
+	@Column(nullable = false)
 	private String name;
-	
-	@Column(name = "description", length = 500)
-	private String description;
-	
-	@OneToMany(mappedBy = "category")
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	private List<Product> products;
-	
+
+	@Column(nullable = false, unique = true)
+	private String slug;
+
+	private Integer order;
+
+	private Boolean isActive = true;
+
+	@CreationTimestamp
+	@Column(name = "created_at", updatable = false)
+	private LocalDateTime createdAt;
+	@UpdateTimestamp
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
+
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Doc> docs;
 }

@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.fpt.dto.ProductDTO;
-import com.fpt.dto.UserDTO;
 import com.fpt.dto.UserListDTO;
 import com.fpt.entity.*;
-import com.fpt.specification.ProductSpecificationBuilder;
 import com.fpt.specification.UserSpecificationBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

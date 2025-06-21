@@ -7,11 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.fpt.entity.Category;
 
-public interface CategoryRepository extends JpaRepository<Category, Integer>, JpaSpecificationExecutor<Category> {
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
-    public Category findByName(String name);
 
-    public boolean existsByName(String name);
-
-    public void deleteByIdIn(List<Integer> ids);
 }

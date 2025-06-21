@@ -1,10 +1,5 @@
 package com.fpt.service;
-
-import com.fpt.dto.ProductDTO;
-import com.fpt.dto.UserDTO;
 import com.fpt.dto.UserListDTO;
-import com.fpt.dto.filter.ProductFilter;
-import com.fpt.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;

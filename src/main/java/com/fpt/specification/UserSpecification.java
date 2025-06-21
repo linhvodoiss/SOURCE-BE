@@ -1,6 +1,4 @@
 package com.fpt.specification;
-
-import com.fpt.entity.Product;
 import com.fpt.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -27,5 +25,4 @@ public class UserSpecification implements Specification<User> {
 
 		return null;
 	}
-
 }

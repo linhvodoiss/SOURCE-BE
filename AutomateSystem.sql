@@ -17,16 +17,18 @@ CREATE TABLE IF NOT EXISTS `User` (
     phoneNumber		VARCHAR(20) NOT NULL UNIQUE,
     `role`            ENUM('ADMIN', 'CUSTOMER') DEFAULT 'CUSTOMER',
     `status`          TINYINT DEFAULT 0, -- 0: Not Active, 1: Active
-    avatarUrl       VARCHAR(500)
+    avatarUrl       VARCHAR(500),
+    created_at      DATETIME DEFAULT NOW(),
+    updated_at      DATETIME DEFAULT NOW()
     );
 
 -- Create table Registration_User_Token
 DROP TABLE IF EXISTS `Registration_User_Token`;
 CREATE TABLE IF NOT EXISTS `Registration_User_Token` (
-                                                         id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                                         token           CHAR(36) NOT NULL UNIQUE,
-    user_id         SMALLINT UNSIGNED NOT NULL,
-    expiryDate      DATETIME NOT NULL
+                                                         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                                         token CHAR(36) NOT NULL UNIQUE,
+    user_id SMALLINT UNSIGNED NOT NULL,
+    expiryDate DATETIME NOT NULL
     );
 
 -- Create table Reset_Password_Token
@@ -38,67 +40,126 @@ CREATE TABLE IF NOT EXISTS `Reset_Password_Token` (
     expiryDate      DATETIME NOT NULL
     );
 
--- Create table category
-DROP TABLE IF EXISTS `Category`;
-CREATE TABLE IF NOT EXISTS `Category` (
-                                          id                SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                          `name`            NVARCHAR(50) NOT NULL UNIQUE,
-    `description`     VARCHAR(500)
+-- Create table Version
+DROP TABLE IF EXISTS Version;
+CREATE TABLE IF NOT EXISTS Version (
+                                       id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                       version         VARCHAR(50) NOT NULL UNIQUE,
+    description     VARCHAR(255),
+    created_at      DATETIME DEFAULT NOW(),
+    updated_at      DATETIME DEFAULT NOW()
     );
 
--- Create table product
-DROP TABLE IF EXISTS `Product`;
-CREATE TABLE IF NOT EXISTS `Product`(
+
+-- Create table category
+DROP TABLE IF EXISTS Category;
+CREATE TABLE IF NOT EXISTS Category (
                                         id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                        `name`          NVARCHAR(50) NOT NULL UNIQUE KEY,
-    category_id     SMALLINT UNSIGNED NOT NULL,
-    number_of_products INT NOT NULL CHECK(number_of_products >= 0),
-    price           FLOAT NOT NULL,
-    thumbnailUrl    VARCHAR(500) DEFAULT '',
-    `description`   VARCHAR(500) DEFAULT '',
+                                        version_id      SMALLINT UNSIGNED NOT NULL,
+                                        name            NVARCHAR(50) NOT NULL,
+    slug            VARCHAR(100) NOT NULL UNIQUE,
+    `order`         INT DEFAULT 0,
+    isActive        TINYINT DEFAULT 1,
     created_at      DATETIME DEFAULT NOW(),
     updated_at      DATETIME DEFAULT NOW(),
-    FOREIGN KEY (category_id) REFERENCES `Category`(id)
+    FOREIGN KEY (version_id) REFERENCES Version(id)
     );
 
--- Create table cart
-DROP TABLE IF EXISTS `Cart`;
-CREATE TABLE IF NOT EXISTS `Cart`(
-                                     id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                     user_id         SMALLINT UNSIGNED NOT NULL,
-                                     created_at      DATETIME DEFAULT NOW(),
-    FOREIGN KEY (user_id) REFERENCES `User`(id)
+
+-- Create table Doc
+DROP TABLE IF EXISTS Doc;
+CREATE TABLE IF NOT EXISTS Doc (
+                                   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                   version_id      SMALLINT UNSIGNED NOT NULL,
+                                   category_id     SMALLINT UNSIGNED NOT NULL,
+                                   title           NVARCHAR(255) NOT NULL,
+    slug            VARCHAR(150) NOT NULL UNIQUE,
+    content         TEXT,
+    `order`         INT DEFAULT 0,
+    isActive        TINYINT DEFAULT 1,
+    created_at      DATETIME DEFAULT NOW(),
+    updated_at      DATETIME DEFAULT NOW(),
+    FOREIGN KEY (version_id) REFERENCES Version(id),
+    FOREIGN KEY (category_id) REFERENCES Category(id)
     );
 
--- Create table cart item
-DROP TABLE IF EXISTS `CartItem`;
-CREATE TABLE IF NOT EXISTS `CartItem`(
-                                         id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                         cart_id         INT UNSIGNED NOT NULL,
-                                         product_id      SMALLINT UNSIGNED NOT NULL,
-                                         quantity        INT NOT NULL CHECK(quantity > 0),
-    FOREIGN KEY (cart_id) REFERENCES `Cart`(id),
-    FOREIGN KEY (product_id) REFERENCES `Product`(id)
+
+
+DROP TABLE IF EXISTS SubscriptionPackage;
+CREATE TABLE IF NOT EXISTS SubscriptionPackage (
+                                                   id              SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                                   name            NVARCHAR(100) NOT NULL,
+    price           FLOAT NOT NULL CHECK (price >= 0),
+    discount        FLOAT DEFAULT 0 CHECK (discount >= 0),
+    billingCycle    ENUM('MONTHLY', 'YEARLY') DEFAULT 'MONTHLY',
+    isActive        TINYINT DEFAULT 1, -- 1: hoạt động, 0: ngừng cung cấp
+    options         VARCHAR(500),
+    simulatedCount  INT DEFAULT 0,
+    created_at      DATETIME DEFAULT NOW(),
+    updated_at      DATETIME DEFAULT NOW()
     );
+DROP TABLE IF EXISTS PaymentOrder;
+CREATE TABLE IF NOT EXISTS PaymentOrder (
+                                            id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                            user_id         SMALLINT UNSIGNED NOT NULL,
+                                            subscription_id SMALLINT UNSIGNED NOT NULL,
+                                            orderId         CHAR(36) NOT NULL UNIQUE,
+    paymentLink     VARCHAR(500),
+    amount          FLOAT NOT NULL,
+    billingCycle    ENUM('MONTHLY', 'YEARLY') NOT NULL,
+    target          VARCHAR(100),
+    paymentStatus   ENUM('PENDING', 'SUCCESS', 'FAILED') DEFAULT 'PENDING',
+    created_at      DATETIME DEFAULT NOW(),
+    updated_at      DATETIME DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES `User`(id),
+    FOREIGN KEY (subscription_id) REFERENCES SubscriptionPackage(id)
+    );
+DROP TABLE IF EXISTS License;
+CREATE TABLE IF NOT EXISTS License (
+                                       id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                       user_id         SMALLINT UNSIGNED NOT NULL,
+                                       subscription_id SMALLINT UNSIGNED NOT NULL,
+                                       licenseKey      CHAR(36) NOT NULL UNIQUE,
+    expiryDate      DATETIME NOT NULL,
+    ip              VARCHAR(50),
+    created_at      DATETIME DEFAULT NOW(),
+    updated_at      DATETIME DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES `User`(id),
+    FOREIGN KEY (subscription_id) REFERENCES SubscriptionPackage(id)
+    );
+
 
 insert into `user`(username, email, `password`, firstName, lastName, phoneNumber, `role`, `status`, avatarUrl)
     value	('admin',	'admin@gmail.com', '$2a$10$RAU5Vl1A6Iheyeg2MSBlVeLRLpH2kRSpredJkzJIm72ZscI6pg/62', 'Nguyen Van', 'A', '0987654321', 'ADMIN', 1, ''),
                     ('CaoVanBay',	'Bay@gmail.com', '$2a$10$RAU5Vl1A6Iheyeg2MSBlVeLRLpH2kRSpredJkzJIm72ZscI6pg/62', 'Cao Van', 'Bay', '0999999999', 'CUSTOMER', 1, ''),
                     ('LeThiTam',	'Tam@gmail.com', '$2a$10$RAU5Vl1A6Iheyeg2MSBlVeLRLpH2kRSpredJkzJIm72ZscI6pg/62', 'Le Thi', 'Tam', '0912345678', 'CUSTOMER', 1, '');
 
-insert into category (`name`, `description`)
-    value ('Nike', 'Nike là một trong những thương hiệu thể thao nổi tiếng nhất trên thế giới. Từ học sinh tiểu học cho đến các vận động viên chuyên nghiệp, không ai có thể phủ nhận sức hấp dẫn của Nike. Nếu bạn khảo sát xem có bao nhiêu người đã hoặc đang sở hữu các sản phẩm của Nike, thì con số này sẽ khiến bạn bất ngờ.'),
-					 ('ADIDAS', 'Adidas là một công ty đa quốc gia đến từ Đức, chuyên sản xuất giày dép, quần áo và phụ kiện. Tiền thân của công ty là Gebruder Dassler Schuhfabrik, được thành lập vào năm 1924 bởi anh em nhà Dassler là Adi Dassler và Rudolf.'),
-                     ('FILA', 'Giày Fila là một thương hiệu giày nổi tiếng với chất lượng cao và thiết kế thời trang. Những đôi giày Fila không chỉ mang lại sự thoải mái khi sử dụng mà còn giúp người mang thể hiện phong cách cá tính riêng. Tuy nhiên, việc chọn kích thước giày Fila phù hợp không phải lúc nào cũng dễ dàng.');
+INSERT INTO SubscriptionPackage (name, price, discount, billingCycle, isActive, options)
+VALUES
+    ('Basic Plan', 9.99, 0, 'MONTHLY', 1, '5 documents per month'),
+    ('Pro Plan', 19.99, 10, 'MONTHLY', 1, 'Unlimited access');
 
-insert into product (`name`, category_id, number_of_products, price, thumbnailUrl, `description`)
-    value ('Giày Chạy Bộ Nam Nike Reactx Infinity Run 4', '1', '100', '3471300', '','Đôi giày Nike InfinityRN 4 ReactX không chỉ mang lại sự hỗ trợ tối ưu trong quá trình chạy bộ, mà còn mang đến cảm giác mới lạ trong mỗi bước chân.'),
-					('Giày Chạy Bộ Nam Nike Air Zoom Structure 26', '1', '100', '4039000', '','Tận hưởng những bước chạy nhẹ nhàng, thoải mái để giúp bạn hoàn thành mục tiêu của mình. '),
-                    ('Giày Chạy Bộ Nam Nike Flex Experience Rn 12', '1', '100', '2179000', '','Đặt những mục tiêu chạy bộ đầy tham vọng và chinh phục chúng cùng Giày Chạy Bộ Nam Nike Flex Experience Run 12! Được thiết kế với phong cách tối giản nhưng đầy tính năng,được thiết kế với sự tối giản và linh hoạt tối ưu, giúp bạn cảm nhận trọn vẹn từng chuyển động trên mọi cung đường. '),
-                    ('Giày Sneaker Unisex Adidas Avryn', '2', '100', '3040000', '','Hãy bước vào kỷ nguyên mới của sự thoải mái và linh hoạt cùng Giày Sneaker Unisex Adidas Avryn. Đây không chỉ là một đôi giày, mà là sự kết hợp tinh hoa công nghệ đỉnh cao từ adidas, đưa trải nghiệm thể thao chuyên nghiệp vào phong cách hàng ngày của bạn'),
-                    ('Giày Sneaker Nam Adidas Osade', '2', '100', '1920000', '','Trong thế giới sneaker luôn biến đổi, đâu là đôi giày vượt thoát khỏi dòng chảy xu hướng, tỏa sáng bất kể thời gian? Giày Sneaker Nam Adidas Osade chính là lời giải đáp, nơi sự tinh tế vượt thời gian kết hợp cùng năng lượng hiện đại, đưa từng bước chân của bạn trở thành tuyên ngôn phong cách mạnh mẽ'),
-                    ('Giày Thể Thao Nam Adidas X_Plrboost', '2', '100', '4200000', '','Mang đến sự đa năng, thoải mái và phong cách cho mọi hành trình phiêu lưu. Đôi giày adidas này biến công nghệ sneaker tiên tiến nhất trở nên thật nhẹ nhàng. Kết cấu thoáng khí giúp đôi chân bạn luôn mát mẻ, cùng đệm BOOST đàn hồi cho cảm giác thoải mái suốt ngày dài.'),
-                    ('Giày Sneaker Unisex Fila Targa Classic X Dragon', '3', '100', '2295000', '','Giày Sneaker Unisex Fila Targa Classic X Dragon - Sự hòa quyện tinh tế giữa di sản và thiết kế đương đại. Chất liệu cao cấp đảm bảo thoải mái và bền bỉ. Chi tiết rồng độc đáo là điểm nhấn nổi bật chắc chắn sẽ biến bạn trở thành tâm điểm của đám đông.'),
-                    ('Giày Sneakers Unisex Fila Ray Bumper', '3', '100', '1996000', '','Hãy chinh phục mọi ánh nhìn với đôi Giày Sneaker Unisex Fila Ray Bumper, sự kết hợp hoàn hảo giữa thiết kế thời thượng và sự thoải mái tối ưu. Được sản xuất từ những chất liệu cao cấp, Fila Ray Bumper không chỉ mang đến vẻ ngoài bắt mắt mà còn đảm bảo sự bền bỉ và êm ái trong từng bước chân.'),
-                    ('Giày Sneakers Unisex Fila Taurus V3', '3', '100', '920500', '','Trải nghiệm đỉnh cao của sự thoải mái và phong cách với Giày Sneaker Unisex Fila Taurus V3, phiên bản mới nhất của mẫu giày bán chạy đình đám FILA TAURUS. Được thiết kế với sự tỉ mỉ và tinh xảo, Giày Sneaker Unisex Fila Taurus V3 hứa hẹn sẽ nâng tầm diện mạo của bạn, đồng hành cùng bạn trên mọi hành trình.');
+INSERT INTO PaymentOrder (user_id, subscription_id, orderId, paymentLink, amount, billingCycle, target, paymentStatus)
+VALUES
+    (1, 2, 'ORDER-123456', 'https://payment.example.com/checkout/ORDER-123456', 17.99, 'MONTHLY', 'web', 'SUCCESS');
 
+INSERT INTO License (user_id, subscription_id, licenseKey, expiryDate, ip)
+VALUES
+    (1, 2, 'LIC-ABCDEF-123456', '2025-07-21 23:59:59', '203.113.78.9');
+
+INSERT INTO Version (version, description)
+VALUES
+    ('v1.0', 'Phiên bản đầu tiên của hệ thống'),
+    ('v1.1', 'Bổ sung thêm chức năng tìm kiếm');
+
+INSERT INTO Category (version_id, name, slug, `order`, isActive)
+VALUES
+    (1, 'Hướng dẫn sử dụng', 'huong-dan-su-dung', 1, 1),
+    (1, 'FAQ', 'cau-hoi-thuong-gap', 2, 1),
+    (2, 'Changelog', 'thay-doi-phien-ban', 1, 1);
+
+INSERT INTO Doc (version_id, category_id, title, slug, content, `order`, isActive)
+VALUES
+    (1, 1, 'Cách đăng ký tài khoản', 'dang-ky-tai-khoan', 'Bạn cần điền email và mật khẩu...', 1, 1),
+    (1, 2, 'Tôi quên mật khẩu, làm sao lấy lại?', 'quen-mat-khau', 'Bạn có thể nhấn vào “Quên mật khẩu”.', 1, 1),
+    (2, 3, 'v1.1 - Thêm chức năng tìm kiếm', 'v1-1-search-update', 'Chúng tôi đã thêm chức năng tìm kiếm...', 1, 1);
