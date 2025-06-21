@@ -30,7 +30,7 @@ public class PaymentOrderService implements IPaymentOrderService {
     }
 
     @Override
-    public PaymentOrderDTO getById(int id) {
+    public PaymentOrderDTO getById(Integer id) {
         return repository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("Payment order not found"));
@@ -42,7 +42,7 @@ public class PaymentOrderService implements IPaymentOrderService {
     }
 
     @Override
-    public PaymentOrderDTO update(int id, PaymentOrderDTO dto) {
+    public PaymentOrderDTO update(Integer id, PaymentOrderDTO dto) {
         PaymentOrder order = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment order not found"));
 
@@ -57,7 +57,7 @@ public class PaymentOrderService implements IPaymentOrderService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Integer id) {
         repository.deleteById(id);
     }
 

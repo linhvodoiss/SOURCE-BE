@@ -4,6 +4,8 @@ import com.fpt.dto.SubscriptionPackageDTO;
 import com.fpt.entity.SubscriptionPackage;
 import com.fpt.repository.SubscriptionPackageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,16 @@ import java.util.List;
 public class SubscriptionPackageService implements ISubscriptionPackageService {
 
     private final SubscriptionPackageRepository repository;
+
+    @Override
+    public Page<SubscriptionPackage> getAllPackage(Pageable pageable, String search) {
+        return null;
+    }
+
+    @Override
+    public List<SubscriptionPackageDTO> convertToDto(List<SubscriptionPackage> data) {
+        return List.of();
+    }
 
     @Override
     public List<SubscriptionPackageDTO> getAll() {

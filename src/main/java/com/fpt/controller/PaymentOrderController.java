@@ -20,7 +20,7 @@ public class PaymentOrderController {
     }
 
     @GetMapping("/{id}")
-    public PaymentOrderDTO getById(@PathVariable int id) {
+    public PaymentOrderDTO getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 
@@ -30,12 +30,12 @@ public class PaymentOrderController {
     }
 
     @PutMapping("/{id}")
-    public PaymentOrderDTO update(@PathVariable int id, @RequestBody PaymentOrderDTO dto) {
+    public PaymentOrderDTO update(@PathVariable Integer id, @RequestBody PaymentOrderDTO dto) {
         return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable Integer id) {
         service.delete(id);
     }
 }

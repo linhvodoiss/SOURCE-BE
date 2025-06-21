@@ -20,7 +20,7 @@ public class LicenseController {
     }
 
     @GetMapping("/{id}")
-    public LicenseDTO getById(@PathVariable int id) {
+    public LicenseDTO getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 
@@ -30,12 +30,12 @@ public class LicenseController {
     }
 
     @PutMapping("/{id}")
-    public LicenseDTO update(@PathVariable int id, @RequestBody LicenseDTO dto) {
+    public LicenseDTO update(@PathVariable Integer id, @RequestBody LicenseDTO dto) {
         return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable Integer id) {
         service.delete(id);
     }
 }

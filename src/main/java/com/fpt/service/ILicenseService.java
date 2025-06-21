@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface ILicenseService {
     List<LicenseDTO> getAll();
-    LicenseDTO getById(int id);
+    LicenseDTO getById(Integer id);
 
     LicenseDTO create(LicenseDTO dto);
-    LicenseDTO update(int id, LicenseDTO dto);
-    void delete(int id);
+    LicenseDTO update(Integer id, LicenseDTO dto);
+    void delete(Integer id);
 
 }

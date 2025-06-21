@@ -28,7 +28,7 @@ public class LicenseService implements ILicenseService {
     }
 
     @Override
-    public LicenseDTO getById(int id) {
+    public LicenseDTO getById(Integer id) {
         return licenseRepository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("License not found"));
@@ -40,7 +40,7 @@ public class LicenseService implements ILicenseService {
     }
 
     @Override
-    public LicenseDTO update(int id, LicenseDTO dto) {
+    public LicenseDTO update(Integer id, LicenseDTO dto) {
         License license = licenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("License not found"));
 
@@ -52,7 +52,7 @@ public class LicenseService implements ILicenseService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Integer id) {
         licenseRepository.deleteById(id);
     }
 

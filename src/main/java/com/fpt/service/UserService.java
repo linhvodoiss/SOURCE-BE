@@ -49,8 +49,8 @@ public class UserService implements IUserService {
 	private ModelMapper modelMapper;
 
 	@Override
-	public Page<User> getAllUser(Pageable pageable, String search) {
-		UserSpecificationBuilder specification = new UserSpecificationBuilder(search);
+	public Page<User> getAllUser(Pageable pageable, String search,Integer status) {
+		UserSpecificationBuilder specification = new UserSpecificationBuilder(search, status);
 		return userRepository.findAll(specification.build(), pageable);
 	}
 

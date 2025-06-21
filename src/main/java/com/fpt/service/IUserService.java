@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface IUserService extends UserDetailsService {
 
-	Page<User> getAllUser(Pageable pageable, String search);
+	Page<User> getAllUser(Pageable pageable, String search, Integer status);
 
 	void createUser(User user);
 

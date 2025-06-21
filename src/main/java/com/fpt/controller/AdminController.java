@@ -43,9 +43,10 @@ public class AdminController {
     @GetMapping("/list")
     public ResponseEntity<Map<String, Object>> getAllUsers(
             Pageable pageable,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer status
     ) {
-        Page<User> entityPages = userService.getAllUser(pageable, search);
+        Page<User> entityPages = userService.getAllUser(pageable, search, status);
         List<UserListDTO> dtos = userService.convertToDto(entityPages.getContent());
         Page<UserListDTO> dtoPage = new PageImpl<>(dtos, pageable, entityPages.getTotalElements());
 

@@ -20,7 +20,7 @@ public class DocController {
     }
 
     @GetMapping("/{id}")
-    public DocDTO getById(@PathVariable int id) {
+    public DocDTO getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 
@@ -30,12 +30,12 @@ public class DocController {
     }
 
     @PutMapping("/{id}")
-    public DocDTO update(@PathVariable int id, @RequestBody DocDTO dto) {
+    public DocDTO update(@PathVariable Integer id, @RequestBody DocDTO dto) {
         return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable Integer id) {
         service.delete(id);
     }
 }
